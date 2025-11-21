@@ -5,7 +5,7 @@ entry = 25.91 # $
 
 startpTH = 90000
 startpUSD = startpTH / cv
-print("startp USD:", startpUSD) 
+print("startps USD:", startpUSD) 
 DownEntry = 0.5
 pd = 80 / DownEntry
 print("% DownEntry:", pd)
