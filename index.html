@@ -833,12 +833,16 @@
                 tbody.appendChild(tr);
             });
 
+            // Calculate percentage of total interest with extra payments relative to principal
+            const interestPercentage = P > 0 ? (withExtra.totalInterest / P) * 100 : 0;
+
             const summary = document.getElementById('loanSummary');
             summary.innerHTML = `
                 <div class="section-title">สรุปผล</div>
-                <div><b>ค่างวดต่อเดือน (เดิม):</b> ${formatMoneyTH(payment)} บาท</div>
-                <div><b>ยอดดอกเบี้ยทั้งหมด (ประมาณ - ไม่โปะ):</b> ${formatMoneyTH(baseline.totalInterest)} บาท</div>
-                <div><b>ยอดดอกเบี้ยทั้งหมด (ประมาณ - มีโปะ):</b> ${formatMoneyTH(withExtra.totalInterest)} บาท</div>
+                <div><b>ค่างวดต่อเดือน:</b> ${formatMoneyTH(payment)} บาท</div>
+                <div><b>ดอกเบี้ยเดิมไม่โปะ:</b> ${formatMoneyTH(baseline.totalInterest)} บาท</div>
+                <div><b>ดอกเบี้ย มีโปะ:</b> ${formatMoneyTH(withExtra.totalInterest)} บาท</div>
+                <div><b>คิดเป็น :</b> ${interestPercentage.toFixed(2)}% ของ ยอดกู้ (Principal)</div>
                 <div><b>ยอดเงินที่จ่ายทั้งหมด (ต้น + ดอก + โปะ):</b> ${formatMoneyTH(withExtra.totalPaid)} บาท</div>
             `;
         }
