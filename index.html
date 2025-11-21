@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Calculators</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,11 +16,12 @@
             font-size: 13px;
             background: #0d0d0d;
             color: #d0d0d0;
-            padding: 8px;
+            padding: 0;
+            margin: 0;
         }
         .tab-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            margin: 0;
         }
         .tab-header {
             display: flex;
@@ -53,13 +55,13 @@
             display: block;
         }
         .container {
-            max-width: 100%;
-            margin: 0 auto;
+            width: 100%;
+            margin: 0;
             background: #1a1a1a;
-            border-radius: 6px;
+            border-radius: 0;
             padding: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.8);
-            border: 1px solid #2a2a2a;
+            box-shadow: none;
+            border: none;
         }
         h2 {
             font-size: 18px;
@@ -73,6 +75,16 @@
             background: #141414;
             border-radius: 4px;
             border: 1px solid #2a2a2a;
+
+        }
+        .section-s {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #141414;
+            border-radius: 4px;
+            border: 1px solid #2a2a2a;
+            height: 250px;
+            width: 300px;
         }
         .inputs-container {
             display: grid;
@@ -85,7 +97,8 @@
             align-items: center;
             margin: 5px 0;
             font-size: 12px;
-            column-gap: 6px;
+            column-gap: 2px;
+            display: block;
         }
         .input-group.full-width {
             grid-column: 1 / -1;
@@ -93,7 +106,7 @@
         label {
             flex: 1;
             color: #a0a0a0;
-            margin-right: 6px;
+            margin-right: 2px;
         }
         input {
             width: 120px;
@@ -159,6 +172,7 @@
             border-radius: 3px;
             font-size: 12px;
             border: 1px solid #222;
+            max-width: 259px;
         }
         .result-label {
             color: #777;
@@ -229,6 +243,85 @@
         .num-rounds-input {
             margin-bottom: 6px;
         }
+        .chart-button {
+            padding: 6px 12px;
+            background: #5cb3ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .chart-button:hover {
+            background: #4a9eff;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #1a1a1a;
+            border-radius: 0;
+            padding: 20px;
+            width: 100%;
+            max-width: 100%;
+            max-height: 100vh;
+            overflow-y: auto;
+            border: none;
+            box-shadow: none;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 18px;
+            color: #5cb3ff;
+            font-weight: bold;
+        }
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #d0d0d0;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close:hover {
+            color: #fff;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #141414;
+            border-radius: 4px;
+            padding: 10px;
+        }
         button {
             padding: 8px 16px;
             background: #5cb3ff;
@@ -257,6 +350,18 @@
         }
         .summary b {
             color: #5cb3ff;
+        }
+        .row-cus{
+            display:   flex;
+            justify-content: start;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 3px;
+            border: 1px solid #222;
+            box-shadow: none;
+            border: none;
         }
     </style>
 </head>
@@ -313,8 +418,8 @@
         </div>
 
         <div class="divider"></div>
-
-        <div class="section">
+    <div class="row-cus">
+        <div class="section-s">
             <div class="section-title">Price Calculations</div>
             <div class="result">
                 <span class="result-label">Startp USD:</span>
@@ -334,9 +439,8 @@
             </div>
         </div>
 
-        <div class="divider"></div>
 
-        <div class="section">
+        <div class="section-s">
             <div class="section-title">Entry & Total</div>
             <div class="result">
                 <span class="result-label">Entry TH:</span>
@@ -355,10 +459,7 @@
                 <span class="result-value" id="total">0</span>
             </div>
         </div>
-
-        <div class="divider"></div>
-
-        <div class="section">
+        <div class="section-s">
             <div class="section-title">Per Day Calculation</div>
             <div class="result">
                 <span class="result-label">จำนวนรอบในเดือน:</span>
@@ -369,11 +470,17 @@
                 <span class="result-value" id="day1Total">0</span>
             </div>
         </div>
+    </div>
+
+       
 
         <div class="divider"></div>
 
         <div class="section">
-            <div class="section-title">Rounds Calculation Table</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <div class="section-title">Rounds Calculation Table</div>
+                <button class="chart-button" id="showChartBtn">แสดงกราฟ</button>
+            </div>
             <div class="rounds-table-container">
                 <table id="roundsTable">
                     <thead>
@@ -390,6 +497,7 @@
                             <th>กำไรเท่านั้น</th>
                             <th>จำนวนรอบในเดือน</th>
                             <th>กำไรรวมทั้งเดือน</th>
+                            <th>กำไรรวมทั้งหมด</th>
                         </tr>
                     </thead>
                     <tbody id="roundsTableBody">
@@ -455,6 +563,8 @@
         const gridInputIds = ['cv', 'entry', 'startpTH', 'downEntry', 'supportDrawdown', 'pf', 'numberOrder', 'perday', 'numRounds'];
         const loanInputIds = ['principal', 'annualRate', 'months'];
         const LOAN_EXTRA_KEY = 'loanExtraPayments';
+        let globalAllRounds = [];
+        let roundsChart = null;
 
         const defaultValues = {
             cv: '34',
@@ -710,8 +820,13 @@
                 }
             }
 
+            // Store allRounds globally for chart
+            globalAllRounds = allRounds;
+
             // Display all rounds in table
+            let cumulativeProfit = 0;
             allRounds.forEach((round, index) => {
+                cumulativeProfit += round.day1Total;
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="round-number">${index + 1}</td>
@@ -726,9 +841,129 @@
                     <td>${round.total.toFixed(2)}</td>
                     <td>${round.day1Ratio.toFixed(2)}</td>
                     <td>${round.day1Total.toFixed(2)}</td>
+                    <td>${cumulativeProfit.toFixed(2)}</td>
                 `;
                 roundsTableBody.appendChild(row);
             });
+        }
+
+        function showChart() {
+            if (globalAllRounds.length === 0) {
+                alert('ไม่มีข้อมูลสำหรับแสดงกราฟ กรุณาคำนวณก่อน');
+                return;
+            }
+
+            const modal = document.getElementById('chartModal');
+            modal.classList.add('active');
+
+            const ctx = document.getElementById('roundsChart');
+            
+            // Destroy existing chart if exists
+            if (roundsChart) {
+                roundsChart.destroy();
+            }
+
+            // Prepare data
+            const rounds = globalAllRounds.map((r, i) => i + 1);
+            const startpTHData = globalAllRounds.map(r => r.startpTH);
+            const entryUSDData = globalAllRounds.map(r => r.entry);
+
+            // Create chart
+            roundsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: rounds,
+                    datasets: [
+                        {
+                            label: 'ทุนทั้งหมด (Startp TH)',
+                            data: startpTHData,
+                            borderColor: '#5cb3ff',
+                            backgroundColor: 'rgba(92, 179, 255, 0.1)',
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Entry USD',
+                            data: entryUSDData,
+                            borderColor: '#4ade80',
+                            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'กราฟแสดง ทุนทั้งหมด และ Entry USD ตาม Round',
+                            color: '#d0d0d0',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#d0d0d0'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Round',
+                                color: '#d0d0d0'
+                            },
+                            ticks: {
+                                color: '#d0d0d0'
+                            },
+                            grid: {
+                                color: '#2a2a2a'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'ทุนทั้งหมด (Startp TH)',
+                                color: '#5cb3ff'
+                            },
+                            ticks: {
+                                color: '#5cb3ff'
+                            },
+                            grid: {
+                                color: '#2a2a2a'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Entry USD',
+                                color: '#4ade80'
+                            },
+                            ticks: {
+                                color: '#4ade80'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function closeChartModal() {
+            const modal = document.getElementById('chartModal');
+            modal.classList.remove('active');
         }
 
         function initializeGridCalculator() {
@@ -742,6 +977,29 @@
                     });
                 }
             });
+
+            // Chart button event listener
+            const showChartBtn = document.getElementById('showChartBtn');
+            if (showChartBtn) {
+                showChartBtn.addEventListener('click', showChart);
+            }
+
+            // Close chart modal event listener
+            const closeChartBtn = document.getElementById('closeChartModal');
+            if (closeChartBtn) {
+                closeChartBtn.addEventListener('click', closeChartModal);
+            }
+
+            // Close modal when clicking outside
+            const chartModal = document.getElementById('chartModal');
+            if (chartModal) {
+                chartModal.addEventListener('click', (e) => {
+                    if (e.target === chartModal) {
+                        closeChartModal();
+                    }
+                });
+            }
+
             calculateGrid();
         }
 
@@ -874,5 +1132,18 @@
             initializeApp();
         }
     </script>
+
+    <!-- Chart Modal -->
+    <div id="chartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">กราฟ Rounds Calculation</h3>
+                <button class="close" id="closeChartModal">&times;</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="roundsChart"></canvas>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
