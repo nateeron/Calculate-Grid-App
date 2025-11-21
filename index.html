@@ -275,6 +275,56 @@
     </div>
 
     <script>
+        // Default values
+        const defaultValues = {
+            cv: '34',
+            entry: '14',
+            startpTH: '90000',
+            downEntry: '0.5',
+            supportDrawdown: '92',
+            pf: '1.2',
+            numberOrder: '100',
+            perday: '5',
+            numRounds: '12'
+        };
+
+        // Save to session storage
+        function saveToSessionStorage() {
+            const inputIds = ['cv', 'entry', 'startpTH', 'downEntry', 'supportDrawdown', 'pf', 'numberOrder', 'perday', 'numRounds'];
+            inputIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    sessionStorage.setItem(`calculateGrid_${id}`, element.value);
+                }
+            });
+        }
+
+        // Load from session storage
+        function loadFromSessionStorage() {
+            const inputIds = ['cv', 'entry', 'startpTH', 'downEntry', 'supportDrawdown', 'pf', 'numberOrder', 'perday', 'numRounds'];
+            const hasStoredData = sessionStorage.getItem('calculateGrid_cv') !== null;
+            
+            inputIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (hasStoredData) {
+                        // Load from session storage
+                        const storedValue = sessionStorage.getItem(`calculateGrid_${id}`);
+                        if (storedValue !== null) {
+                            element.value = storedValue;
+                        }
+                    } else {
+                        // Save default values to session storage
+                        const defaultValue = defaultValues[id];
+                        if (defaultValue !== undefined) {
+                            element.value = defaultValue;
+                            sessionStorage.setItem(`calculateGrid_${id}`, defaultValue);
+                        }
+                    }
+                }
+            });
+        }
+
         function calculateRound(cv, entry, startpTH, downEntry, supportDrawdown, pf, numberOrder, perday) {
             // Price Calculations
             const startpUSD = startpTH / cv;
@@ -380,14 +430,32 @@
             });
         }
 
-        // Add event listeners to all inputs
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', calculate);
-        });
+        // Load values from session storage and initialize
+        function initialize() {
+            // Load from session storage
+            loadFromSessionStorage();
+            
+            // Add event listeners to all inputs
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    // Save to session storage when input changes
+                    saveToSessionStorage();
+                    // Calculate
+                    calculate();
+                });
+            });
+            
+            // Initial calculation
+            calculate();
+        }
 
-        // Initial calculation
-        calculate();
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            initialize();
+        }
     </script>
 </body>
 </html>
